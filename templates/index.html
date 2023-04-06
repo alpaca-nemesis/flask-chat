@@ -1,9 +1,83 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Hello World</title>
-  </head>
-  <body>
-    <h1>Hello World!</h1>
-  </body>
+<head>
+	<title>CSF-GPT</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		input {
+			padding: 5px;
+			font-size: 16px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			margin-bottom: 10px;
+			width: 300px;
+		}
+		button {
+			padding: 5px 10px;
+			background-color: #4CAF50;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			font-size: 16px;
+		}
+		button:hover {
+			background-color: #3e8e41;
+		}
+		.result {
+			padding: 10px;
+			border: 1px solid #ccc;
+			border-radius: 5px;
+			margin-top: 10px;
+			min-height: 50px;
+		}
+	</style>
+</head>
+<body>
+	<h1>输入你的问题</h1>
+	<input type="text" id="input-box" placeholder="请输入内容">
+	<button onclick="submitData()">提交</button>
+	<div id="result-container"></div>
+
+	<script>
+
+        let time = new Date()
+		function submitData() {
+			// 获取输入框中的内容
+			var inputValue = document.getElementById("input-box").value;
+
+			// 清空输入框
+			document.getElementById("input-box").value = "";
+
+			// 将输入内容放到输入框上方
+			var resultContainer = document.getElementById("result-container");
+			var p = document.createElement("p");
+            time = new Date()
+            let timestr = "【" + time.toLocaleTimeString() + "】"
+			p.innerText = timestr + "You:\n" + inputValue;
+			resultContainer.insertBefore(p, resultContainer.firstChild);
+
+			// 发送数据到服务器
+			var xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function() {
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					// 获取服务器返回的信息
+					var response = xhr.responseText;
+
+					// 显示返回信息的内容到输入框上方
+					var p = document.createElement("p");
+                    time = new Date()
+                    let timestr = "【" + time.toLocaleTimeString() + "】"
+					p.innerText = timestr + "ChatGPT:\n" + response;
+					resultContainer.insertBefore(p, resultContainer.firstChild);
+				}
+			}
+			xhr.open("POST", "/quest", true);
+			xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+			xhr.send("data=" + encodeURIComponent(inputValue));
+		}
+	</script>
+</body>
 </html>
+
